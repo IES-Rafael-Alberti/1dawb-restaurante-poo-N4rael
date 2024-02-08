@@ -1,15 +1,26 @@
 class SistemaGestionRestaurante(private val mesas: List<Mesa>) {
 
     fun realizarPedido(numeroMesa: Int, pedido: Pedido) {
-        //TODO desarrollar este método...
+        val mesa = mesas.find { it.numero == numeroMesa }
+        requireNotNull(mesa) { "La mesa no existe." }
+        require(mesa.estado == "ocupada") { "La mesa no está ocupada." }
+        mesa.agregarPedido(pedido)
     }
 
     fun cerrarPedido(numeroMesa: Int, numeroPedido: Int? = null) {
-        //TODO desarrollar este método...
+        val mesa = mesas.find { it.numero == numeroMesa }
+        requireNotNull(mesa) { "La mesa no existe." }
+        val pedido = if (numeroPedido == null) mesa.pedidos.lastOrNull() else mesa.pedidos.find { it.numero == numeroPedido }
+        requireNotNull(pedido) { "El pedido no existe." }
+        pedido.estado = "servido"
     }
 
     fun cerrarMesa(numeroMesa: Int) {
-        //TODO desarrollar este método...
+        val mesa = mesas.find { it.numero == numeroMesa }
+        requireNotNull(mesa) { "La mesa no existe." }
+        if (mesa.pedidos.all { it.estado == "servido" }) {
+            mesa.liberarMesa()
+        }
     }
 
     fun buscarPlatos(): List<String>? {
